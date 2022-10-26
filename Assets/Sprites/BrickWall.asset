@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: Brick_Wall
+  m_Name: BrickWall
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: -2099337450, guid: ec2aca656d9cbb04db69493d1ba20ccd, type: 3}
+  m_Sprite: {fileID: -513812685, guid: 5ffd6e2714f4cfa4eba8ad0f3697c464, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
