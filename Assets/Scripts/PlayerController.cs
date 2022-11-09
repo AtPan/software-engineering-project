@@ -22,8 +22,8 @@ public class PlayerController : MonoBehaviour
 
         // Player Initialization
         this.GetComponent<SpriteRenderer>().material.color = new Color(0.8f, 0.4f, 0.2f, 1.0f);
-        this.transform.position = new Vector3(0, 0, -0.5f);
         this.can_move = 6;
+        this.transform.position = GlobalState.GetPlayerCoords();
     }
 
     // Update is called once per frame
