@@ -1,5 +1,8 @@
+using System;
 using System.IO;
 using System.Text;
+using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -23,14 +26,15 @@ public class IOGame : MonoBehaviour
             SceneManager.LoadScene(Encoding.UTF8.GetString(buffer, 0, bytes_read).Trim(), LoadSceneMode.Single);
 
             /* Read Coordinates of player */
-            bytes_read = read.Read(buffer, 0, 2);
-            GlobalState.SetPlayerCoords((int)buffer[0], (int)buffer[1]);
+            bytes_read = read.Read(buffer, 0, 8);
+            GlobalState.SetPlayerCoords(BitConverter.ToSingle(buffer[0..4]), BitConverter.ToSingle(buffer[4..8]));
 
             // Loading Enemies and/or items would go here
 
             read.Close();
+            Time.timeScale = 1;
         }
-        catch (System.Exception e) {
+        catch (Exception e) {
             Debug.Log(e);
         }
     }
@@ -48,17 +52,14 @@ public class IOGame : MonoBehaviour
 
             /* Save Position of Player */
             GameObject player = GameObject.Find("Player");
-            if (player != null) {
-                buffer[1] = (byte)((int)player.transform.position.x);
-                buffer[2] = (byte)((int)player.transform.position.y);
-                write.Write(buffer, 1, 2);
-            }
+            write.Write(BitConverter.GetBytes(player.transform.position.x), 0, 4);
+            write.Write(BitConverter.GetBytes(player.transform.position.y), 0, 4);
 
             // Saving Enemies and/or items would go here
             
             write.Close();
         }
-        catch  (System.Exception e) {
+        catch  (Exception e) {
             Debug.Log(e);
         }
     }
