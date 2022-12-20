@@ -1,0 +1,18 @@
+-- Saturday --
+[*] 1. Dead enemies do not appear in scene
+[*] 2. Player returns to original position in scene
+
+-- Sunday --
+[*] 1. Items that players can pickup for extra stat buffs (+2 attack, -1 health, etc.)
+[*] 2. Game ends when player health reaches 0 (show you died screen)
+[*] 3. Add obstacles for player to avoid -- be it unpassable or dangerous terrain. Grounded enemies should find themselves under the same constraint.
+[*] 4. Add flying enemies that can pass obstacles unharmed (except exterior walls)
+
+-- Monday --
+[ ] 1. Add friendly characters who support the player -- be it with hints or items (see point Sunday.1)
+[ ] 2. Add support for controller
+
+-- Tuesday --
+[ ] 1. Remove unused code bits
+[ ] 2. Comment all code
+[ ] 3. Organize all code

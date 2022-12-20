@@ -202,7 +202,7 @@ GameObject:
   - component: {fileID: 181368384}
   - component: {fileID: 181368383}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: GlobalState
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -223,6 +223,7 @@ MonoBehaviour:
   player_x: 0
   player_y: 0
   file_save: 
+  max_enemies: 4
 --- !u!4 &181368384
 Transform:
   m_ObjectHideFlags: 0
@@ -753,6 +754,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f69fba9bf6dd10c468692e6057e468fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyPrefab: {fileID: 4005260363122194645, guid: 9136355aa5a3b2c44a89e792a992f251, type: 3}
 --- !u!1 &951819108
 GameObject:
   m_ObjectHideFlags: 0

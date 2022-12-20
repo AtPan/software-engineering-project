@@ -15,13 +15,33 @@ public class GlobalState : MonoBehaviour
     public float player_x;
     public float player_y;
     public string file_save;
-    //public list of enemies would go here
+    public int max_enemies;
 
-    private static GlobalState gs;
+    private PlayerController pc;
+
+    private static GlobalState gs = null;
+    
     private void Awake() {
-        GlobalState.gs = this;
-        file_save = "test.sav";
-        DontDestroyOnLoad(this);
+        if(GlobalState.gs == null) {
+            // Global game setting
+            QualitySettings.vSyncCount = 0;
+            Application.targetFrameRate = 60;
+            GlobalState.gs = this;
+            file_save = "test.sav";
+            DontDestroyOnLoad(this);
+        }
+    }
+
+    public static void TrackPlayer(PlayerController pc)
+    {
+        gs.pc = pc;
+    }
+
+    public static PlayerController RetreivePlayer()
+    {
+        var pc = gs.pc;
+        gs.pc = null;
+        return pc;
     }
 
     public static GlobalState GetSingleton() {

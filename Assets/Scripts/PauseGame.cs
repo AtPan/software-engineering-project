@@ -4,16 +4,27 @@ using UnityEngine;
 
 public class PauseGame : MonoBehaviour
 {
-    [SerializeField] GameObject pauseMenu = null;
-    bool isPaused;
+    GameObject pauseScreen = null;
+    bool isPaused = false;
+    public bool canPause = true;
+
+    private void Start()
+    {
+        pauseScreen = GameObject.Find("PauseMenu");
+        if(pauseScreen != null)
+        {
+            pauseScreen.SetActive(false);
+        }
+    }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        //Debug.Log($"CanPause: {canPause} -- Escape: {Input.GetKeyDown(KeyCode.Escape)}");
+        if (pauseScreen != null && canPause && Input.GetKeyDown(KeyCode.Escape))
         {
             isPaused = !isPaused;
             Time.timeScale = isPaused ? 0 : 1;
-            pauseMenu.SetActive(isPaused);
+            pauseScreen.SetActive(isPaused);
         }
     }
 }

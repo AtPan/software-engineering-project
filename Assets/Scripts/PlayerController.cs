@@ -3,112 +3,85 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 using System;
+using System.Reflection;
 
 public class PlayerController : MonoBehaviour
 {
     public float speed = 1;
-    public Rigidbody2D playerRb;
-
+    [NonSerialized]
     public Tilemap walls;
-
     public float horizontal;
     public float vertical;
-
     public TextMeshProUGUI text;
 
-    private int attack = 1;
+    public EnemyController targetedEnemy;
 
-    //private static bool playerExists = false;
+    public int attack = 1;
+    public int health = 10;
+    public GameObject inventory;
+    private TextMeshProUGUI inventoryText;
 
-    void Start()
+    private Rigidbody2D body;
+    private bool canMove;
+    private SpriteRenderer sprite;
+    private BattleController battleController;
+
+    void Awake()
     {
-        // Global game settings
-        QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = 60;
-
         // Player Initialization
+        PlayerController pc = GlobalState.RetreivePlayer();
+        this.body = this.gameObject.GetComponent<Rigidbody2D>();
+        this.sprite = this.gameObject.GetComponent<SpriteRenderer>();
+        this.battleController = this.gameObject.GetComponent<BattleController>();
+        this.canMove = true;
+
+        if (inventory != null)
+        {
+            this.inventoryText = inventory.GetComponentInChildren<TextMeshProUGUI>();
+            this.inventory.SetActive(false);
+        }
+
+        if (pc == null) return;
+        
+        this.attack = pc.attack;
+        this.health = pc.health;
+        this.speed = pc.speed;
+        this.sprite.sprite = pc.sprite.sprite;
+        this.sprite.color = pc.sprite.color;
+        this.sprite.flipX = pc.sprite.flipX;
+        this.sprite.flipY = pc.sprite.flipY;
+    }
+
+    private void Start()
+    {
         this.transform.position = GlobalState.GetPlayerCoords();
     }
 
     private void Update()
     {
-        // Receive Input --------------------------------------------------
-        horizontal = Input.GetAxisRaw("Horizontal" ) * speed; // [-speed, speed]
-	    vertical = Input.GetAxisRaw("Vertical") * speed;      // [-speed, speed]
-        // ----------------------------------------------------------------
-
-        // Create new position vector -------------------------------------
-        Vector2 position = transform.position;
-
-        // Prioritizes vertical movement
-        // Prevents movement on both axes simultaniously
-        if (vertical != 0) position.y += vertical * speed;
-        else if (horizontal != 0) position.x += horizontal * speed;
-        // ---------------------------------------------------------------
-
-        int tile_x = (int)Math.Round(position.x);
-        int tile_y = (int)Math.Round(position.y);
-        
-        // Check if position is valid --------------------------------------------------------------------
-        if (walls == null || !walls.GetTile(new Vector3Int(tile_x - 1, tile_y - 1, 0))) {
-            // Handle player movement across non-blocking (non-wall) objects
-            playerRb.position = position;
+        if(Input.GetKeyDown(KeyCode.I) && this.inventory != null && (battleController.battleScreen == null || !battleController.battleScreen.activeSelf))
+        {
+            Time.timeScale = Time.timeScale == 0 ? 1 : 0;
+            inventory.SetActive(!inventory.activeSelf);
+            inventoryText.text = $"Inventory\nHealth: {this.health}\nAttack: {this.attack}\nSpeed: {this.speed}";
         }
-        else {
-            horizontal = vertical = 0;
-        }
-        // -----------------------------------------------------------------------------------------------
 
-        /*
-        Debug.Log($"({position.x}, {position.y}) -- ({(int)(position.x + playerRb.velocity.x + hInput)}, {(int)(position.y + playerRb.velocity.y + vInput)})");
-        if(walls == null || !walls.GetTile(new Vector3Int((int)(position.x + playerRb.velocity.x + hInput), (int)(position.y + playerRb.velocity.y + vInput), 0))) {
-            if((hInput > 0 || hInput < 0 ) && (vInput > 0))
-            {
-                playerRb.velocity = new Vector2(0, speed);
-                hInput = 0;
-            }
-            else if ((hInput > 0 || hInput < 0) && (vInput < 0))
-            {
-                playerRb.velocity = new Vector2(0, -1 * speed);
-                hInput = 0;
-            }
-            else if (vInput > 0 && hInput == 0)
-            {
-                playerRb.velocity = new Vector2(0, speed);
-                hInput = 0;
-            }
-            else if (vInput < 0 && hInput == 0)
-            {
-                playerRb.velocity = new Vector2(0, -1 * speed);
-                hInput = 0;
-            }
-            else if (hInput > 0 && vInput == 0)
-            {
-                playerRb.velocity = new Vector2(speed,0);
-                vInput = 0;
-            }
-            else if (hInput < 0 && vInput == 0)
-            {
-                playerRb.velocity = new Vector2(-1 * speed, 0);
-                vInput = 0;
-            }
-            else
-            {
-                playerRb.velocity = new Vector2(0, 0);
-                hInput = 0;
-                vInput = 0;
-            }
+        if(this.canMove) {
+            // Receive Input --------------------------------------------------
+            this.horizontal = Input.GetAxisRaw("Horizontal" ) * speed;   // [-speed, speed]
+            this.vertical = Input.GetAxisRaw("Vertical") * speed;      // [-speed, speed]
+            // ----------------------------------------------------------------
+            
+            this.body.velocity = new Vector3(horizontal, vertical, 0f);
         }
-        else {
-            playerRb.velocity = new Vector2(0, 0);
-            hInput = 0;
-            vInput = 0;
-            Debug.Log("Hit wall");
-        }
-        */
-        
+    }
+
+    public SpriteRenderer GetSprite()
+    {
+        return sprite;
     }
 
     public float getVInput()
@@ -121,13 +94,73 @@ public class PlayerController : MonoBehaviour
         return horizontal;
     }
 
-    public void AttackEnemy(EnemyController e) {
-        e.TakeDamage(attack);
+    public void TakeDamage(int damage)
+    {
+        this.health -= damage;
+        if(this.health <= 0)
+        {
+            SceneManager.LoadScene("GameOver");
+        }
+    }
 
+    public void AttackEnemy() {
+        if (this.targetedEnemy == null) return;
         if(text != null) text.text = "";
 
-        if(e.IsDead()) {
-            // Switch Scenes
+        this.targetedEnemy.enemy.TakeDamage(attack);
+
+        if(this.targetedEnemy.enemy.IsDead()) {
+            Destroy(this.targetedEnemy.gameObject);
+            this.targetedEnemy = null;
+            battleController.EndBattleScene();
+            return;
         }
+
+        this.TakeDamage(this.targetedEnemy.enemy.attack);
+
+        if(text != null)
+        {
+            text.text = $"Attacked {this.targetedEnemy.enemy.enemyName} for {this.attack} damage\n";
+            text.text += $"{this.targetedEnemy.enemy.enemyName} attacked for {this.targetedEnemy.enemy.attack} damage";
+        }
+    }
+
+    public void Analyze() {
+        if (this.text != null) {
+            this.text.text = this.targetedEnemy == null ? "Enemy is already dead" : $"Enemy {this.targetedEnemy.enemy.enemyName}:\nRemaining Health: {this.targetedEnemy.enemy.health}";
+        }
+    }
+
+    public void StopMoving() {
+        this.canMove = false;
+    }
+
+    public void AllowMoving() {
+        this.canMove = true;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision) {
+        // Find gameobject collided with
+        GameObject target = collision.gameObject;
+
+        // If that object is a wall ---------------------------------
+        if(target.tag == "Wall") {
+            // Remove all velocity, halting the player
+            this.body.velocity = Vector3.zero;
+            this.body.angularVelocity = 0.0f;
+
+            // Bounce player back a step, removing them from the wall
+            this.body.AddForce(new Vector3(-horizontal * speed, -vertical * speed, 0.0f));
+        }
+        // ----------------------------------------------------------
+
+        // If that object is an enemy -------------------------------
+        else if(target.tag == "Enemy") {
+            EnemyController e = target.GetComponent<EnemyController>();
+            this.targetedEnemy = e;
+            e.enemy.StopMoving();
+            battleController.StartBattleScene(this, new EnemyController[] { e });
+        }
+        // ----------------------------------------------------------
     }
 }

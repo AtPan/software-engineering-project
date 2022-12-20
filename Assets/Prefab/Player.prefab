@@ -12,11 +12,12 @@ GameObject:
   - component: {fileID: 7383096491465955497}
   - component: {fileID: 1099185003648528841}
   - component: {fileID: 3090560962191739986}
-  - component: {fileID: 8390243729919670587}
-  - component: {fileID: 4596383113768544988}
+  - component: {fileID: -5934594212626104247}
+  - component: {fileID: -4941657132189936398}
+  - component: {fileID: 436877148416904258}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -76,8 +77,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_SortingOrder: 4
+  m_Sprite: {fileID: 21300000, guid: 0de2d2adb39669f4ca3c99070ce1aa12, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -100,11 +101,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd14268386ee4334ea2a685f96522bfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1
-  playerRb: {fileID: 3090560962191739986}
-  walls: {fileID: 0}
+  speed: 10
   horizontal: 0
   vertical: 0
+  targetedEnemy: {fileID: 0}
+  attack: 1
+  health: 10
 --- !u!50 &3090560962191739986
 Rigidbody2D:
   serializedVersion: 4
@@ -124,10 +126,10 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
---- !u!58 &8390243729919670587
-CircleCollider2D:
+--- !u!61 &-5934594212626104247
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -140,9 +142,37 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
   serializedVersion: 2
-  m_Radius: 0.5
---- !u!114 &4596383113768544988
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
+--- !u!114 &-4941657132189936398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7383096491465955498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1014f90ef37d7b41bdda4d274701ed5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  battleScreen: {fileID: 0}
+  enemies: []
+  player: {fileID: 0}
+  pause: {fileID: 0}
+  timeScale: 0
+  oldPlayerPosition: {x: 0, y: 0}
+--- !u!114 &436877148416904258
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -154,4 +184,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39210e8e169b9a147bd1d7c6dbfca0c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pauseMenu: {fileID: 0}
+  canPause: 1
