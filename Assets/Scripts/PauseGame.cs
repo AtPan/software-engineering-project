@@ -27,4 +27,9 @@ public class PauseGame : MonoBehaviour
             pauseScreen.SetActive(isPaused);
         }
     }
+
+    public bool GetPaused()
+    {
+        return isPaused;
+    }
 }

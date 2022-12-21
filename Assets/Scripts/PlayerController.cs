@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
     private bool canMove;
     private SpriteRenderer sprite;
     private BattleController battleController;
+    private PauseGame pause;
 
     void Awake()
     {
@@ -36,6 +37,7 @@ public class PlayerController : MonoBehaviour
         this.body = this.gameObject.GetComponent<Rigidbody2D>();
         this.sprite = this.gameObject.GetComponent<SpriteRenderer>();
         this.battleController = this.gameObject.GetComponent<BattleController>();
+        this.pause = this.gameObject.GetComponent<PauseGame>();
         this.canMove = true;
 
         if (inventory != null)
@@ -62,9 +64,10 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.I) && this.inventory != null && (battleController.battleScreen == null || !battleController.battleScreen.activeSelf))
+        if(Input.GetKeyDown(KeyCode.I) && this.inventory != null && (battleController.battleScreen == null || !battleController.battleScreen.activeSelf) && !this.pause.GetPaused())
         {
             Time.timeScale = Time.timeScale == 0 ? 1 : 0;
+            this.pause.canPause = inventory.activeSelf;
             inventory.SetActive(!inventory.activeSelf);
             inventoryText.text = $"Inventory\nHealth: {this.health}\nAttack: {this.attack}\nSpeed: {this.speed}";
         }
@@ -137,6 +140,11 @@ public class PlayerController : MonoBehaviour
 
     public void AllowMoving() {
         this.canMove = true;
+    }
+
+    public PauseGame GetPauseMenuController()
+    {
+        return this.pause;
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {

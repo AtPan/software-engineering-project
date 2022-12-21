@@ -53,7 +53,7 @@ public class BattleController : MonoBehaviour
         oldPlayerPosition = player.transform.position;
         player.transform.position = player_battle_position;
 
-        this.pause = player.gameObject.GetComponent<PauseGame>();
+        this.pause = player.GetPauseMenuController();
         this.pause.canPause = false;
     }
 
